@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-%=n#3$q0g_b&*-+&g7+hrv81xt$+lu#6#ld84@h!jr2!m6xeh_
 DEBUG = True
 AUTH_USER_MODEL = 'app.CustomUser'  # Use your actual app name
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True  
 
 # If you need credentials (e.g., authentication with cookies or tokens)
