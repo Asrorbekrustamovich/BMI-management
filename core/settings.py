@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -24,15 +24,18 @@ SECRET_KEY = 'django-insecure-%=n#3$q0g_b&*-+&g7+hrv81xt$+lu#6#ld84@h!jr2!m6xeh_
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+# Custom user model
 AUTH_USER_MODEL = 'app.CustomUser'  # Use your actual app name
 
+# Allowed hosts (for production, specify your domain instead of '*')
 ALLOWED_HOSTS = ['*']
-CORS_ALLOW_ALL_ORIGINS = True  
 
-# If you need credentials (e.g., authentication with cookies or tokens)
-CORS_ALLOW_CREDENTIALS = True  
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (not recommended for production)
+CORS_ALLOW_CREDENTIALS = True  # Allow credentials (e.g., cookies, tokens)
 
-# Allowed HTTP methods (standard RESTful methods)
+# Allowed HTTP methods
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
@@ -42,7 +45,7 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 
-# Allowed headers (standard HTTP headers)
+# Allowed headers
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
@@ -56,16 +59,11 @@ CORS_ALLOW_HEADERS = [
 ]
 
 # Alternatively, use regex to allow any origin dynamically
-# Example: Allow any domain with HTTPS or HTTP
-# CORS_ALLOWED_ORIGIN_REGEXES = [
-#     r"^https?://.*$",  # This allows any frontend URL dynamically
-# ]
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https?://.*$",  # Allows any domain with HTTP or HTTPS
 ]
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -73,13 +71,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
-    'rest_framework',
-    'corsheaders',
+    'app',  # Your custom app
+    'rest_framework',  # Django REST framework
+    'corsheaders',  # CORS headers for cross-origin requests
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS middleware should be at the top
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -109,10 +107,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -120,10 +116,8 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -139,27 +133,33 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Media files (uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-MEDIA_URL = '/media/'  # URL prefix for media files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Django REST framework settings (optional)
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
