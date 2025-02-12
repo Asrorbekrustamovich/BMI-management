@@ -25,7 +25,6 @@ SECRET_KEY = 'django-insecure-%=n#3$q0g_b&*-+&g7+hrv81xt$+lu#6#ld84@h!jr2!m6xeh_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 AUTH_USER_MODEL = 'app.CustomUser'  # Use your actual app name
-CSRF_TRUSTED_ORIGINS= [""]
 ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True 
 
@@ -168,5 +167,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'  # URL prefix for media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
