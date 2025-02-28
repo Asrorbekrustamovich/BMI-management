@@ -4,6 +4,15 @@ from django.contrib import admin
 from django.conf import settings
 
 from django.conf.urls.static import static
+from django.http import JsonResponse
+
+def healthcheck(request):
+    return JsonResponse({"status": "ok"})
+
+urlpatterns = [
+    path('health/', healthcheck),
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', CustomUserListCreate.as_view(), name='user-list-create'),
@@ -52,3 +61,4 @@ urlpatterns = [
     # Login URL
     path('login/', LoginView.as_view(), name='login'),]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
