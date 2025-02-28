@@ -63,8 +63,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "core.urls"
 
-# PORT
-PORT = os.getenv("PORT", "8000")  # Railway PORT-ni avtomatik oladi
+# PORT0
+PORT = int(os.getenv("PORT", "8000"))  # Railway PORT-ni avtomatik oladi
 
 # Templates
 TEMPLATES = [
