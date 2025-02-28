@@ -90,9 +90,10 @@ DATABASES = {
     "default": dj_database_url.config(
         default=os.getenv("DATABASE_URL"),
         conn_max_age=600,
-        ssl_require=False  # Railway SSL xatosi bo‘lsa, True yoki False qilib ko‘ring
+        ssl_require=False  # Agar Railway SSL xato bersa, buni False qiling
     )
 }
+
 
 
 # Parol tekshirish
