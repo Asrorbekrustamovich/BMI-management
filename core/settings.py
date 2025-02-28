@@ -18,7 +18,6 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 # Ruxsat berilgan hostlar
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
-
 # CORS sozlamalari
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True  
@@ -63,7 +62,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "core.urls"
-import os
+
+# PORT
 PORT = os.getenv("PORT", "8000")  # Railway PORT-ni avtomatik oladi
 
 # Templates
@@ -86,15 +86,20 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 # Ma'lumotlar bazasi sozlamalari
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    print("❌ Xatolik: DATABASE_URL topilmadi! Railway environment variables ni tekshiring.")
+else:
+    print(f"✅ DATABASE_URL yuklandi: {DATABASE_URL}")
+
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
+        default=DATABASE_URL,
         conn_max_age=600,
         ssl_require=False  # Agar Railway SSL xato bersa, buni False qiling
     )
 }
-
-
 
 # Parol tekshirish
 AUTH_PASSWORD_VALIDATORS = [
