@@ -92,6 +92,12 @@ class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
+from django.contrib.auth.hashers import check_password
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import CustomUser
+
 class LoginView(APIView):
     def post(self, request):
         username = request.data.get('username')
@@ -100,19 +106,19 @@ class LoginView(APIView):
         if not username or not password:
             return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Authenticate user (DO NOT compare passwords manually)
-        user = authenticate(username=username, password=password)
+        # Foydalanuvchini username orqali bazadan topamiz
+        user = CustomUser.objects.filter(username=username).first()
 
-        if user is not None:
-            # Serialize user data manually
+        # Parolni oddiy string taqqoslash orqali tekshirish (XAVFSIZ EMAS!)
+        if user is not None and user.password == password:
             user_data = {
                 'id': user.id,
                 'username': user.username,
-                'role': user.role,  # Assuming `role` is a valid field
-                'user_permissions': list(user.user_permissions.values_list('codename', flat=True))  # Serialize permissions
+                'role': user.role.id,
             }
-
             return Response(user_data, status=status.HTTP_200_OK)
-        
+
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 

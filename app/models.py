@@ -14,7 +14,7 @@ class BaseModel(models.Model):
 class Role(models.Model):
     name=models.TextField()
     def __str__(self):
-        return super().__str__()
+        return self.name
 class CustomUser(models.Model):
     """
     Custom user model without Django's built-in authentication.
@@ -24,18 +24,6 @@ class CustomUser(models.Model):
     role =models.ForeignKey(Role,on_delete=models.CASCADE,default=3)
     def __str__(self):
         return self.username
-
-    def set_password(self, raw_password):
-        """
-        Manually set the password (stored in plain text for demonstration).
-        """
-        self.password = raw_password
-
-    def check_password(self, raw_password):
-        """
-        Manually check the password (plain text comparison).
-        """
-        return self.password == raw_password
 
     def __str__(self):
         return self.username
