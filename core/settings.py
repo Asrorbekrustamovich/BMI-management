@@ -88,18 +88,25 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Ma'lumotlar bazasi sozlamalari
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+DATABASES = {
+    "default": dj_database_url.config(
+        default=DATABASE_URL,
+        engine="django.db.backends.postgresql",  # Qo‘lda ENGINE qo‘shamiz
+        conn_max_age=600,
+        ssl_require=False,  # Agar Railway SSL xato bersa, buni False qiling
+    )
+}
+
+# DATABASE_URL ni tekshirish uchun print
+print(f"DATABASE_URL: {DATABASE_URL}")
+
+
 if not DATABASE_URL:
     print("❌ Xatolik: DATABASE_URL topilmadi! Railway environment variables ni tekshiring.")
 else:
     print(f"✅ DATABASE_URL yuklandi: {DATABASE_URL}")
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,
-        ssl_require=False  # Agar Railway SSL xato bersa, buni False qiling
-    )
-}
+
 
 # Parol tekshirish
 AUTH_PASSWORD_VALIDATORS = [
