@@ -14,6 +14,7 @@ urlpatterns = [
 ]
 
 urlpatterns = [
+    path()
     path('admin/', admin.site.urls),
     path('users/', CustomUserListCreate.as_view(), name='user-list-create'),
     path('users/<int:pk>/', CustomUserDetail.as_view(), name='user-detail'),
