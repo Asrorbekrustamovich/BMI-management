@@ -13,7 +13,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-key")
 
 # Debug rejimi
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = True
+
 
 # Ruxsat berilgan hostlar
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
