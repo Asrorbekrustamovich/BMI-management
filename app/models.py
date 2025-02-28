@@ -1,10 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from datetime import datetime
 
 class BaseModel(models.Model):
     """
-    Asosiy model, umumiy maydonlar bilan.
+    Base model with common fields.
     """
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -12,129 +11,84 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
-class CustomUserManager(BaseUserManager):
-    def create_user(self, username, password=None, role=None):
-        if not username:
-            raise ValueError('The Username field must be set')
-        user = self.model(username=username, role=role)
-        user.set_password(password)  # This will call the overridden set_password method
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, username, password=None, role=None):
-        user = self.create_user(username, password, role)
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-        return user
-
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class Role(models.Model):
+    name=models.TextField()
+    def __str__(self):
+        return super().__str__()
+class CustomUser(models.Model):
+    """
+    Custom user model without Django's built-in authentication.
+    """
     username = models.TextField(unique=True)
-    password = models.TextField()  # Password will be stored in plain text
-    role = models.TextField()
+    password = models.TextField()  # Password stored in plain text (for demonstration)
+    role =models.ForeignKey(Role,on_delete=models.CASCADE,default=3)
+    def __str__(self):
+        return self.username
 
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+    def set_password(self, raw_password):
+        """
+        Manually set the password (stored in plain text for demonstration).
+        """
+        self.password = raw_password
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['role']
-
-    objects = CustomUserManager()
+    def check_password(self, raw_password):
+        """
+        Manually check the password (plain text comparison).
+        """
+        return self.password == raw_password
 
     def __str__(self):
         return self.username
 
-    # Override set_password to store password in plain text
-    def set_password(self, raw_password):
-        self.password = raw_password  # Store the password directly without hashing
-
-    # Override check_password to compare plain text passwords
-    def check_password(self, raw_password):
-        return self.password == raw_password
-
-    def has_perm(self, perm, obj=None):
-        return self.is_superuser
-
-    def has_module_perms(self, app_label):
-        return self.is_superuser
-
-# class Role(models.Model):
-#     name = models.TextField()
-
-# class UserRole(models.Model):
-#     role = models.ForeignKey(Role, on_delete=models.CASCADE)
-#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-
+class Department(models.Model):
+    Department_name=models.TextField(null=True,blank=True)
+    def __str__(self):
+        return self.Department_name
+    
 class Position(models.Model):
     position_name = models.TextField()
-
+    department=models.ForeignKey(Department,on_delete=models.CASCADE)
     def __str__(self):
-        return self.position_name  # Return the position name as the string representation
+        return self.position_name
 
 class Staff(BaseModel):
     """
-    Tashkilotdagi xodimni ifodalaydi.
+    Represents a staff member in the organization.
     """
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='staff_profile')
-    full_name = models.TextField(max_length=27, null=False, help_text="To'liq ismi.")
+    full_name = models.TextField(max_length=27, null=False, help_text="Full name.")
     position = models.ForeignKey(Position, on_delete=models.CASCADE)
-    salary = models.IntegerField(help_text="Maoshi.")
-    email = models.EmailField(help_text="Elektron pochta manzili.")
-    phone = models.TextField(max_length=27, help_text="Telefon raqami.")
+    salary = models.IntegerField(help_text="Salary.")
+    email = models.EmailField(help_text="Email address.")
+    phone = models.TextField(max_length=27, help_text="Phone number.")
 
     def __str__(self):
-            return self.full_name
-class Department(models.Model):
-    """
-    Tashkilotdagi bo'limni ifodalaydi.
-    """
-    name = models.TextField(null=False, help_text="Bo'lim nomi.")
-    manager = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True, related_name='managed_departments', help_text="Bo'lim boshlig'i.")
-
-    def __str__(self):
-        return self.name
-
-
-
-
-
+        return self.full_name
 class Announcement(BaseModel):
     """
-    Foydalanuvchi tomonidan e'lon qilingan xabarni ifodalaydi.
+    Represents an announcement made by a user.
     """
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='announcements')
-    commentary = models.TextField(help_text="Asosiy sharh.")
+    commentary = models.TextField(help_text="Main commentary.")
 
     def __str__(self):
         return f"{self.user.username} tomonidan e'lon qilingan xabar ({self.created_at} : {self.commentary})"
-
-class Reply(BaseModel):
-    """
-    E'longa javobni ifodalaydi.
-    """
-    announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE, related_name='replies')
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='replies')
-    commentary = models.TextField(help_text="Javob matni.")
-
-    def __str__(self):
-        return f"{self.user.username} tomonidan javob ({self.created_at})"
-
 class Accounting(BaseModel):
     """
-    Xodim uchun hisob-kitob ma'lumotlarini ifodalaydi.
+    Represents accounting records for a staff member.
     """
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='accounting_records')
     month = models.TextField()
-    year = models.IntegerField(help_text="Yil.")
-    incentive_money = models.IntegerField(default=0, help_text="Rag'batlantirish puli.")
-    money_withheld_from_salary = models.IntegerField(default=0, help_text="Maoshdan ushlab qolingan pul.")
-    reason_for_withholding = models.TextField(blank=True, null=True, help_text="Ushlab qolinish sababi.")
-    money_withheld_for_income_tax = models.IntegerField(default=0, help_text="Soliqqa tortilgan pul.")
-    remaining_amount = models.IntegerField(help_text="Qolgan summa.")
+    year = models.IntegerField(help_text="Year.")
+    incentive_money = models.IntegerField(default=0, help_text="Incentive money.")
+    money_withheld_from_salary = models.IntegerField(default=0, help_text="Money withheld from salary.")
+    reason_for_withholding = models.TextField(blank=True, null=True, help_text="Reason for withholding.")
+    money_withheld_for_income_tax = models.IntegerField(default=0, help_text="Money withheld for income tax.")
+    remaining_amount = models.IntegerField(help_text="Remaining amount.")
 
     def save(self, *args, **kwargs):
         """
-        Qolgan summani avtomatik hisoblash.
+        Automatically calculate the remaining amount.
         """
         self.remaining_amount = (self.staff.salary + self.incentive_money) - \
                                 (self.money_withheld_from_salary + self.money_withheld_for_income_tax)
@@ -142,62 +96,59 @@ class Accounting(BaseModel):
 
     def __str__(self):
         return f"{self.staff.full_name} uchun hisob-kitob ({self.month} {self.year})"
-
 class LeaveRequest(BaseModel):
     """
-    Xodimning ta'til so'rovini ifodalaydi.
+    Represents a leave request by a staff member.
     """
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='leave_requests')
-    start_date = models.DateField(help_text="Ta'til boshlanish sanasi.")
-    end_date = models.DateField(help_text="Ta'til tugash sanasi.")
-    reason = models.TextField(help_text="Ta'til sababi.")
+    start_date = models.DateField(help_text="Start date of leave.")
+    end_date = models.DateField(help_text="End date of leave.")
+    reason = models.TextField(help_text="Reason for leave.")
     status = models.CharField(
         max_length=27,
         choices=[('Kutilmoqda', 'Kutilmoqda'), ('Tasdiqlangan', 'Tasdiqlangan'), ('Rad etilgan', 'Rad etilgan')],
         default='Kutilmoqda',
-        help_text="Ta'til so'rovi holati."
+        help_text="Leave request status."
     )
 
     def __str__(self):
         return f"{self.staff.full_name} uchun ta'til so'rovi ({self.start_date} dan {self.end_date} gacha)"
-
 class Document(BaseModel):
     """
-    Xodimga tegishli hujjatni ifodalaydi.
+    Represents a document associated with a staff member.
     """
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='documents')
-    title = models.TextField(help_text="Hujjat nomi.")
-    file = models.FileField(upload_to='documents/', help_text="Hujjat faylini yuklang.")
-    description = models.TextField(help_text="Hujjat tavsifi.")
+    title = models.TextField(help_text="Document title.")
+    file = models.FileField(upload_to='documents/', help_text="Upload document file.")
+    description = models.TextField(help_text="Document description.")
 
     def __str__(self):
         return f"Hujjat: {self.title} ({self.staff.full_name} uchun)"
-
 class Expense(BaseModel):
     """
-    Xodim tomonidan qilingan xarajatni ifodalaydi.
+    Represents an expense made by a staff member.
     """
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='expenses')
-    description = models.TextField(help_text="Xarajat tavsifi.")
-    amount = models.IntegerField(help_text="Xarajat miqdori.")
-    date = models.DateField(help_text="Xarajat sanasi.")
+    description = models.TextField(help_text="Expense description.")
+    amount = models.IntegerField(help_text="Expense amount.")
+    date = models.DateField(help_text="Expense date.")
     status = models.CharField(
         max_length=27,
         choices=[('Kutilmoqda', 'Kutilmoqda'), ('Tasdiqlangan', 'Tasdiqlangan'), ('Rad etilgan', 'Rad etilgan')],
         default='Pending',
-        help_text="Xarajat holati."
+        help_text="Expense status."
     )
 
     def __str__(self):
         return f"Xarajat: {self.staff.full_name} tomonidan ({self.description})"
-
-class Feedback(BaseModel):
-    """
-    Xodim tomonidan berilgan fikr-mulohazani ifodalaydi.
-    """
-    staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='feedbacks')
-    message = models.TextField(help_text="Fikr-mulohaza matni.")
-    response = models.TextField(blank=True, null=True, help_text="Javob.")
+class Message(models.Model):
+    sender = models.ForeignKey(CustomUser, related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(CustomUser, related_name='received_messages', on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)    
+    class Meta:
+        db_table = 'message'
 
     def __str__(self):
-        return f"Fikr-mulohaza: {self.staff.full_name} tomonidan ({self.message})"
+        return f"Message from {self.sender} to {self.receiver} at {self.timestamp}"

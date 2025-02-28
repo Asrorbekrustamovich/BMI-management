@@ -1,18 +1,25 @@
-from rest_framework import serializers
-from .models import (
-    Position, CustomUser, Staff, Announcement, Reply, Accounting, 
-    Department, LeaveRequest, Document, Expense, Feedback,
-)
+from rest_framework import serializers, generics
+from .models import *
+
+# Serializers
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = '__all__'
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = '__all__'
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'
 
 class PositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Position
         fields = '__all__'
-
-class CustomUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = "__all__"
 
 class StaffSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,19 +31,9 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         model = Announcement
         fields = '__all__'
 
-class ReplySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Reply
-        fields = '__all__'
-
 class AccountingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Accounting
-        fields = '__all__'
-
-class DepartmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Department
         fields = '__all__'
 
 class LeaveRequestSerializer(serializers.ModelSerializer):
@@ -54,7 +51,10 @@ class ExpenseSerializer(serializers.ModelSerializer):
         model = Expense
         fields = '__all__'
 
-class FeedbackSerializer(serializers.ModelSerializer):
+class MessageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Feedback
+        model = Message
         fields = '__all__'
+
+# Generic Views
+

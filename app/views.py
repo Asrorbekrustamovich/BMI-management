@@ -1,121 +1,96 @@
-from rest_framework import generics
-from .models import (
-    CustomUser, Staff, Announcement, Reply, Accounting, 
-    Department, LeaveRequest, Document, Expense, Feedback,Position,
-)
-from .serializers import (
-    PositionSerializer, CustomUserSerializer, StaffSerializer, AnnouncementSerializer,
-    ReplySerializer, AccountingSerializer, DepartmentSerializer, LeaveRequestSerializer, DocumentSerializer, ExpenseSerializer, FeedbackSerializer,
-)
-from django.http import HttpResponse
+from .models import *
+from rest_framework import serializers, generics
+from app.serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import CustomUser
-from .serializers import CustomUserSerializer
-import pandas as pd
-from rest_framework.views import APIView
-
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Staff, Position, Department, Document, LeaveRequest, Accounting, Expense, Feedback, Announcement, Reply
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-class PositionListCreateView(generics.ListCreateAPIView):
-    queryset = Position.objects.all()
-    serializer_class = PositionSerializer
-    
-class PositionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Position.objects.all()
-    serializer_class = PositionSerializer
-
-
-class CustomUserListCreateView(generics.ListCreateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-
-class CustomUserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-
-class StaffListCreateView(generics.ListCreateAPIView):
-    queryset = Staff.objects.all()
-    serializer_class = StaffSerializer
-
-class StaffRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Staff.objects.all()
-    serializer_class = StaffSerializer
-
-class AnnouncementListCreateView(generics.ListCreateAPIView):
-    queryset = Announcement.objects.all()
-    serializer_class = AnnouncementSerializer
-
-class AnnouncementRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Announcement.objects.all()
-    serializer_class = AnnouncementSerializer
-
-class ReplyListCreateView(generics.ListCreateAPIView):
-    queryset = Reply.objects.all()
-    serializer_class = ReplySerializer
-
-class ReplyRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Reply.objects.all()
-    serializer_class = ReplySerializer
-
-class AccountingListCreateView(generics.ListCreateAPIView):
-    queryset = Accounting.objects.all()
-    serializer_class = AccountingSerializer
-
-class AccountingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Accounting.objects.all()
-    serializer_class = AccountingSerializer
-
-class DepartmentListCreateView(generics.ListCreateAPIView):
-    queryset = Department.objects.all()
-    serializer_class = DepartmentSerializer
-
-class DepartmentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Department.objects.all()
-    serializer_class = DepartmentSerializer
-
-class LeaveRequestListCreateView(generics.ListCreateAPIView):
-    queryset = LeaveRequest.objects.all()
-    serializer_class = LeaveRequestSerializer
-
-class LeaveRequestRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = LeaveRequest.objects.all()
-    serializer_class = LeaveRequestSerializer
-
-class DocumentListCreateView(generics.ListCreateAPIView):
-    queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
-
-class DocumentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
-
-class ExpenseListCreateView(generics.ListCreateAPIView):
-    queryset = Expense.objects.all()
-    serializer_class = ExpenseSerializer
-
-class ExpenseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Expense.objects.all()
-    serializer_class = ExpenseSerializer
-
-class FeedbackListCreateView(generics.ListCreateAPIView):
-    queryset = Feedback.objects.all()
-    serializer_class = FeedbackSerializer
-
-class FeedbackRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Feedback.objects.all()
-    serializer_class = FeedbackSerializer
-
 from django.contrib.auth import authenticate
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import Permission
-from .models import CustomUser  # Ensure this points to your CustomUser model
+class CustomUserListCreate(generics.ListCreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+
+class CustomUserDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+class RoleListCreate(generics.ListCreateAPIView):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+
+class RoleDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+
+class DepartmentListCreate(generics.ListCreateAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+
+class DepartmentDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+
+class PositionListCreate(generics.ListCreateAPIView):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+
+class PositionDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+
+class StaffListCreate(generics.ListCreateAPIView):
+    queryset = Staff.objects.all()
+    serializer_class = StaffSerializer
+
+class StaffDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Staff.objects.all()
+    serializer_class = StaffSerializer
+
+class AnnouncementListCreate(generics.ListCreateAPIView):
+    queryset = Announcement.objects.all()
+    serializer_class = AnnouncementSerializer
+
+class AnnouncementDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Announcement.objects.all()
+    serializer_class = AnnouncementSerializer
+
+class AccountingListCreate(generics.ListCreateAPIView):
+    queryset = Accounting.objects.all()
+    serializer_class = AccountingSerializer
+
+class AccountingDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Accounting.objects.all()
+    serializer_class = AccountingSerializer
+
+class LeaveRequestListCreate(generics.ListCreateAPIView):
+    queryset = LeaveRequest.objects.all()
+    serializer_class = LeaveRequestSerializer
+
+class LeaveRequestDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LeaveRequest.objects.all()
+    serializer_class = LeaveRequestSerializer
+
+class DocumentListCreate(generics.ListCreateAPIView):
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+
+class DocumentDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+
+class ExpenseListCreate(generics.ListCreateAPIView):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
+
+class ExpenseDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
+
+class MessageListCreate(generics.ListCreateAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+
+class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
 
 class LoginView(APIView):
     def post(self, request):
