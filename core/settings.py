@@ -90,13 +90,23 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default=DATABASE_URL,
-        engine="django.db.backends.postgresql",  # Qo‘lda ENGINE qo‘shamiz
-        conn_max_age=600,
-        ssl_require=False,  # Agar Railway SSL xato bersa, buni False qiling
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "railway",  # Database name
+        "USER": "postgres",  # Username
+        "PASSWORD": "UArUVXNIMUpintsrNMcPEQbeIjURWRhS",  # Password
+        "HOST": "yamanote.proxy.rlwy.net",  # Host
+        "PORT": "58225",  # Port
+        "CONN_MAX_AGE": 600,
+        "OPTIONS": {
+            "sslmode": "require",  # If SSL is needed
+        },
+    }
 }
+
+# Print the database connection to check
+print(f"DATABASE Configuration: {DATABASES['default']}")
+
 
 # DATABASE_URL ni tekshirish uchun print
 print(f"DATABASE_URL: {DATABASE_URL}")
